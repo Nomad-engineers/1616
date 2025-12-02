@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { v4 as uuidv4 } from 'uuid'
 import { content } from './content'
+import { v4 } from 'uuid'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -14,7 +14,7 @@ export const Pages: CollectionConfig = {
     beforeValidate: [
       ({ data }) => {
         if (!data?.id) {
-          const customID = uuidv4()
+          const customID = v4()
           return { ...data, id: customID }
         }
         return data
@@ -41,11 +41,33 @@ export const Pages: CollectionConfig = {
   ],
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
       schedulePublish: true,
     },
     maxPerDoc: 50,
   },
+  endpoints: [
+    {
+      path: '/slug/:slug',
+      method: 'get',
+      handler: async (req) => {
+        try {
+          const slug = req.routeParams?.slug
+          if (!slug) return Response.json({ error: 'slug required' }, { status: 400 })
+          const data = (
+            await req.payload.find({
+              collection: 'pages',
+              where: {
+                slug: {
+                  equals: slug,
+                },
+              },
+            })
+          ).docs[0]
+          return Response.json(data)
+        } catch (error) {
+          return Response.json({ error }, { status: 500 })
+        }
+      },
+    },
+  ],
 }

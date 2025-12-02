@@ -25,15 +25,16 @@ export const section: Block = {
         serviceCard,
         packageCard,
         caseCard,
-        // TODO: blog
-        // {
-        //   slug: 'blog-card',
-        //   fields: [
-        //    {
-        //     relationTo: ''
-        //    }
-        //   ],
-        // },
+        {
+          slug: 'blog-card',
+          fields: [
+            {
+              name: 'blog',
+              type: 'relationship',
+              relationTo: 'blog',
+            },
+          ],
+        },
       ],
     },
   ],

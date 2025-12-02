@@ -10,6 +10,8 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages/config'
 import { Header } from './globals/Header'
+import { Blog } from './collections/Blog'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,7 +24,7 @@ export default buildConfig({
     },
     autoRefresh: true,
   },
-  collections: [Users, Media, Pages],
+  collections: [Users, Media, Pages, Blog],
   globals: [Header],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -33,6 +35,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
+    push: false,
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [
