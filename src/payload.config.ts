@@ -20,6 +20,7 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    autoRefresh: true,
   },
   collections: [Users, Media, Pages],
   globals: [Header],
