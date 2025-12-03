@@ -14,6 +14,8 @@ import { Blog } from './collections/Blog'
 import { migrations } from './migrations'
 import { headers } from 'next/headers'
 import { Plans } from './collections/Plans'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { Plan } from './payload-types'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -45,7 +47,50 @@ export default buildConfig({
     prodMigrations: migrations,
   }),
   sharp,
-  plugins: [
-    // storage-adapter-placeholder
+  email: nodemailerAdapter({
+    defaultFromAddress: '1616@nomad-engineers.space',
+    defaultFromName: '1616.marketing',
+    transportOptions: {
+      host: process.env.SMTP_HOST,
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    },
+  }),
+  plugins: [],
+  endpoints: [
+    {
+      path: '/send-form',
+      method: 'post',
+      handler: async (req) => {
+        try {
+          const { name, email, planId, message } = await req.json!()
+
+          const plan: Plan = await req.payload.findByID({
+            collection: 'plans',
+            id: planId,
+          })
+          await req.payload.sendEmail({
+            to: 'baidosovich@gmail.com',
+            subject: `1616.marketing ${email}`,
+            text: `
+Name: ${name}
+Email: ${email}
+Plan: ${plan.title} - ${plan.price}
+Message: ${message}
+            `.trim(),
+          })
+          return Response.json({ success: true })
+        } catch (error) {
+          return Response.json({ error }, { status: 500 })
+        }
+      },
+    },
   ],
 })
