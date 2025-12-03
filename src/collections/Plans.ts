@@ -5,6 +5,9 @@ export const Plans: CollectionConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    useAsTitle: 'title',
+  },
   fields: [
     {
       name: 'title',
