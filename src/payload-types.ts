@@ -72,6 +72,7 @@ export interface Config {
     pages: Page;
     blog: Blog;
     plans: Plan;
+    forms: Form;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
     plans: PlansSelect<false> | PlansSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -338,6 +340,19 @@ export interface Blog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  name?: string | null;
+  email?: string | null;
+  plan?: (number | null) | Plan;
+  message?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -471,6 +486,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'plans';
         value: number | Plan;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -697,6 +716,18 @@ export interface PlansSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  plan?: T;
+  message?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -773,10 +804,15 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Header {
   id: number;
   logo?: (number | null) | Media;
-  items: {
-    page: string | Page;
-    id?: string | null;
-  }[];
+  items?:
+    | {
+        text?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  buttonText?: string | null;
+  buttonUrl?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -789,9 +825,12 @@ export interface HeaderSelect<T extends boolean = true> {
   items?:
     | T
     | {
-        page?: T;
+        text?: T;
+        url?: T;
         id?: T;
       };
+  buttonText?: T;
+  buttonUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

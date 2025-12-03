@@ -1,4 +1,4 @@
-// storage-adapter-import-placeholder
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -16,6 +16,7 @@ import { headers } from 'next/headers'
 import { Plans } from './collections/Plans'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { Plan } from './payload-types'
+import { Forms } from './collections/Forms'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,7 +33,7 @@ export default buildConfig({
     },
     autoRefresh: true,
   },
-  collections: [Users, Media, Pages, Blog, Plans],
+  collections: [Users, Media, Pages, Blog, Plans, Forms],
   globals: [Header],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -63,7 +64,15 @@ export default buildConfig({
       },
     },
   }),
-  plugins: [],
+  plugins: [
+    vercelBlobStorage({
+      enabled: true,
+      collections: {
+        media: true,
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
   endpoints: [
     {
       path: '/send-form',
@@ -75,6 +84,15 @@ export default buildConfig({
           const plan: Plan = await req.payload.findByID({
             collection: 'plans',
             id: planId,
+          })
+          await req.payload.create({
+            collection: 'forms',
+            data: {
+              name,
+              email,
+              plan,
+              message,
+            },
           })
           await req.payload.sendEmail({
             to: 'baidosovich@gmail.com',

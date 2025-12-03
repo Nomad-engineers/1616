@@ -11,14 +11,28 @@ export const Header: GlobalConfig = {
     {
       name: 'items',
       type: 'array',
-      required: true,
       maxRows: 8,
       fields: [
         {
-          name: 'page',
-          type: 'relationship',
-          relationTo: 'pages',
-          required: true,
+          name: 'text',
+          type: 'text',
+        },
+        {
+          name: 'url',
+          type: 'text',
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'buttonText',
+          type: 'text',
+        },
+        {
+          name: 'buttonUrl',
+          type: 'text',
         },
       ],
     },
