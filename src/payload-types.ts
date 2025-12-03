@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     blog: Blog;
+    plans: Plan;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
+    plans: PlansSelect<false> | PlansSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -236,6 +238,7 @@ export interface Page {
         blockType: 'about';
       }
     | {
+        slug: string;
         tag?: string | null;
         title?: string | null;
         subtitle?: string | null;
@@ -250,13 +253,8 @@ export interface Page {
                   blockType: 'service-card';
                 }
               | {
-                  title: string;
-                  price: string;
-                  description: string;
-                  features: {
-                    feature: string;
-                    id?: string | null;
-                  }[];
+                  plan: number | Plan;
+                  isPrimary?: boolean | null;
                   id?: string | null;
                   blockName?: string | null;
                   blockType: 'package-card';
@@ -292,6 +290,22 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plans".
+ */
+export interface Plan {
+  id: number;
+  title: string;
+  price: string;
+  description: string;
+  features: {
+    feature: string;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -453,6 +467,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blog';
         value: string | Blog;
+      } | null)
+    | ({
+        relationTo: 'plans';
+        value: number | Plan;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -589,6 +607,7 @@ export interface PagesSelect<T extends boolean = true> {
         section?:
           | T
           | {
+              slug?: T;
               tag?: T;
               title?: T;
               subtitle?: T;
@@ -607,15 +626,8 @@ export interface PagesSelect<T extends boolean = true> {
                     'package-card'?:
                       | T
                       | {
-                          title?: T;
-                          price?: T;
-                          description?: T;
-                          features?:
-                            | T
-                            | {
-                                feature?: T;
-                                id?: T;
-                              };
+                          plan?: T;
+                          isPrimary?: T;
                           id?: T;
                           blockName?: T;
                         };
@@ -665,6 +677,23 @@ export interface BlogSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plans_select".
+ */
+export interface PlansSelect<T extends boolean = true> {
+  title?: T;
+  price?: T;
+  description?: T;
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

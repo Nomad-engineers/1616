@@ -7,6 +7,12 @@ export const section: Block = {
   slug: 'section',
   fields: [
     {
+      name: 'slug',
+      type: 'text',
+      unique: true,
+      required: true,
+    },
+    {
       name: 'tag',
       type: 'text',
     },

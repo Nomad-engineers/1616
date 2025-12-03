@@ -13,6 +13,7 @@ import { Header } from './globals/Header'
 import { Blog } from './collections/Blog'
 import { migrations } from './migrations'
 import { headers } from 'next/headers'
+import { Plans } from './collections/Plans'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -29,7 +30,7 @@ export default buildConfig({
     },
     autoRefresh: true,
   },
-  collections: [Users, Media, Pages, Blog],
+  collections: [Users, Media, Pages, Blog, Plans],
   globals: [Header],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
